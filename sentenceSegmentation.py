@@ -27,13 +27,7 @@ class SentenceSegmentation():
 
 		#Fill in code here
 		segmentedText = re.split('\.|\?|\;|\!', text.strip())
-
-
 		return segmentedText
-
-
-
-
 
 	def punkt(self, text):
 		"""
@@ -53,7 +47,5 @@ class SentenceSegmentation():
 		segmentedText = None
 
 		#Fill in code here
-		segmentedText = sent_tokenizer.tokenize(text.strip())
-		
-		
+		segmentedText = sent_tokenizer.tokenize(text.strip())		
 		return segmentedText

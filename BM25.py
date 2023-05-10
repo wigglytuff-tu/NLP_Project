@@ -13,6 +13,7 @@ import json
 import matplotlib.pyplot as plt
 import warnings
 warnings.filterwarnings("ignore")
+
 # Input compatibility for Python 2 and Python 3
 if version_info.major == 3:
     pass
@@ -162,28 +163,21 @@ class SearchEngine:
 		print("Process documents")
 		processedDocs = self.preprocessDocs(docs)
 
-		# Build document index
-		# print("Build document index")
-		# self.informationRetriever.buildIndex(processedDocs, doc_ids)
-		# # Rank the documents for each query
-		# print("Rank documents")
-		# doc_IDs_ordered = self.informationRetriever.rank(processedQueries)
-
 		# Read relevance judements
 		print("Reading relevance judements")
 		qrels = json.load(open(args.dataset + "cran_qrels.json", 'r'))[:]
 
 		corpus = []
 		for doc in processedDocs:
-			tmp = []
-			for sent in doc: tmp+=(sent)
-			corpus.append(tmp)
+			temp = []
+			for sent in doc: temp+=(sent)
+			corpus.append(temp)
 
 		queries = []
 		for doc in processedQueries:
-			tmp = []
-			for sent in doc: tmp+=(sent)
-			queries.append(tmp)
+			temp = []
+			for sent in doc: temp+=(sent)
+			queries.append(temp)
 
 		bm25 = BM25Plus(corpus)
 		results = []

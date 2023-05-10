@@ -32,45 +32,33 @@ class InformationRetrieval():
 
 		#Fill in code here
 		self.index = index
-		D = len(docs)
-        
 		list_of_words = []
 
 		for doc in docs:
 			for sentence in doc:
 				for word in sentence:
-					list_of_words.append(word)   #this can have repetition of words 
+					list_of_words.append(word)   #Can have repetition of words 
 
 		self.terms = list(set(list_of_words))
 
-		df = np.zeros(len(self.terms)) # df(i) is number of docs containing term i, used for calculating IDF 
-		
+		df = np.zeros(len(self.terms)) # df(i): number of docs containing term i, used for calculating IDF 
 		TDf = np.zeros([len(self.terms),len(docs)]) #term-document matrix
-        
-        
+		
 		for j, doc in tqdm(enumerate(docs)):       # iterate over documents
 			for k, sentence in enumerate(doc):  # iterate over sentences for a document
 				for word in sentence:
 					try:
 						TDf[self.terms.index(word),j] += 1
 					except:
-						temp_skip = 0
+						x_skip = 0
         
 		df = np.sum(TDf > 0, axis=1)
-
-		self.IDF = np.log(D/df)            
-
+		self.IDF = np.log(len(docs)/df)            
 		self.doc_weights = np.zeros([len(self.terms),len(docs)])
         
 		for i in range(len(self.terms)):
 			self.doc_weights[i,:] = self.IDF[i]*TDf[i,:]   # vector weights for each document 
-                      
-
-		# index = {key: None for key in docIDs}  # initialize dictionary with keys as doc_IDs
-       
-		# for j in range(len(docs)): 
-		# 	index[docIDs[j]] = self.doc_weights[:,j]   # update dict-values with weight vector for corresponding docIDs  
-
+		
 		print(self.doc_weights.shape)
 		self.tsvd = TruncatedSVD(n_components=250)
 		self.tsvd.fit(self.doc_weights.T)
@@ -104,8 +92,7 @@ class InformationRetrieval():
 		doc_IDs_ordered = []
 
 		#Fill in code here
-		Q = len(queries) 
-		TQ_matrix = np.zeros([len(self.terms),Q]) # term frequency matrix (for each query in list queries)
+		TQ_matrix = np.zeros([len(self.terms),len(queries)]) # term frequency matrix (for each query in list queries)
         
 		for i, unique_word in enumerate(self.terms):
 			for j, query in enumerate(queries):       # iterate over all queries
@@ -114,18 +101,18 @@ class InformationRetrieval():
 						if unique_word == word:
 							TQ_matrix[i,j] += 1 
 
-		self.query_weights = np.zeros([len(self.terms),Q])
+		self.query_weights = np.zeros([len(self.terms),len(queries)])
         
 		for i, unique_word in enumerate(self.terms):
 			self.query_weights[i,:] = self.IDF[i]*TQ_matrix[i,:]  # vector weights for each query  
         
 		id_docs = list(self.index.keys())
                 
-		doc_IDs_ordered  = list(range(Q))
+		doc_IDs_ordered  = list(range(len(queries)))
 
 		tsvd_queries = self.tsvd.transform(self.query_weights.T)
 
-		for j in range(Q):
+		for j in range(len(queries)):
 			dict_cosine = {key: None for key in id_docs} # given ONE query, stores cosine measures for between query and all docs
 			for doc_id, doc_vector in self.index.items():
 				a = doc_vector
@@ -136,7 +123,3 @@ class InformationRetrieval():
 			doc_IDs_ordered[j] = [x for x, _ in dc_sort]
 	
 		return doc_IDs_ordered
-
-
-
-

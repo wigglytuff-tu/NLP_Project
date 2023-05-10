@@ -24,15 +24,15 @@ class InflectionReduction:
 			stemmed/lemmatized tokens representing a sentence
 		"""
 
-		reducedText = []
+		r_text = []
 
 		#Fill in code here
-		for each_sentence in text:
-			reducedSentence = []
-			for each_word in each_sentence:
-				reducedSentence.append(lemmatizer.lemmatize(each_word))
-			reducedText.append(reducedSentence)
+		for each_sent in text:
+			r_sent = []
+			for each_word in each_sent:
+				r_sent.append(lemmatizer.lemmatize(each_word))
+			r_text.append(r_sent)
 
-		return reducedText
+		return r_text
 
 
